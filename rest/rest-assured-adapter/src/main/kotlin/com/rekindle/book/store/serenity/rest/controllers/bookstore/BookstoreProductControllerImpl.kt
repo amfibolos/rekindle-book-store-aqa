@@ -3,43 +3,45 @@ package com.rekindle.book.store.serenity.rest.controllers.bookstore
 import com.google.inject.Inject
 import com.rekindle.book.store.domain.configuration.Configuration
 import com.rekindle.book.store.domain.filters.JacksonFilters
-import com.rekindle.book.store.domain.valueobjects.Bookstore
+import com.rekindle.book.store.domain.valueobjects.Product
 import com.rekindle.book.store.serenity.rest.specification.Specification
 import io.restassured.RestAssured
 import io.restassured.response.Response
 import org.apache.http.HttpStatus
 
-class BookstoreControllerImpl @Inject constructor(
+class BookstoreProductControllerImpl @Inject constructor(
     private val config: Configuration,
     private val spec: Specification
-) : BookstoreController {
+) : BookstoreProductController {
     override fun get(param: String): Response {
-        return RestAssured.given(spec.basicSpec())
-            .pathParams(mutableMapOf("bookstoreId" to param))
+        return RestAssured
+            .given(spec.basicSpec())
+            .pathParams(mutableMapOf("productId" to param))
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
-            .get(config.bookstoreEndpoint().bookstoreById())
+            .get(config.bookstoreEndpoint().bookstoreProductById())
     }
 
-    override fun getSuccessfully(param: String): Bookstore {
+    override fun getSuccessfully(param: String): Product {
         return this.get(param)
             .then()
             .statusCode(HttpStatus.SC_OK)
             .extract()
             .body()
-            .`as`(Bookstore::class.java)
+            .`as`(Product::class.java)
     }
 
     override fun getAll(param: String): Response {
-        return RestAssured.given(spec.basicSpec())
+        return RestAssured
+            .given(spec.basicSpec())
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
-            .get(config.bookstoreEndpoint().bookstores())
+            .get(config.bookstoreEndpoint().bookstoreProducts())
     }
 
-    override fun getAllSuccessfully(param: String): List<Bookstore> {
+    override fun getAllSuccessfully(param: String): List<Product> {
         return this.getAll()
             .then()
             .statusCode(HttpStatus.SC_OK)
@@ -49,17 +51,18 @@ class BookstoreControllerImpl @Inject constructor(
             .getList(".")
     }
 
-    override fun post(t: Bookstore): Response {
+    override fun post(t: Product): Response {
         return RestAssured
             .given(spec.basicSpec())
-            .body(t.toJsonStringFiltered(JacksonFilters.customerFilter))
+            .pathParams(mutableMapOf("bookstoreId" to t.bookstoreId))
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
-            .post(config.bookstoreEndpoint().bookstores())
+            .body(t.toJsonStringFiltered(JacksonFilters.bookstoreProductFilter))
+            .post(config.bookstoreEndpoint().bookstoreProductByStoreId())
     }
 
-    override fun postSuccessfully(t: Bookstore): Bookstore {
+    override fun postSuccessfully(t: Product): Product {
         val id: String = this.post(t)
             .then()
             .statusCode(HttpStatus.SC_CREATED)
@@ -71,34 +74,34 @@ class BookstoreControllerImpl @Inject constructor(
         return t
     }
 
-    override fun put(t: Bookstore): Response {
+    override fun put(t: Product): Response {
         return RestAssured
             .given(spec.basicSpec())
-            .pathParams(mutableMapOf("bookstoreId" to t.id))
-            .body(t.toJsonStringFiltered(JacksonFilters.customerFilter))
+            .pathParams(mutableMapOf("productId" to t.id))
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
-            .put(config.bookstoreEndpoint().bookstoreById())
+            .body(t.toJsonStringFiltered(JacksonFilters.bookstoreProductFilter))
+            .put(config.bookstoreEndpoint().bookstoreProductById())
     }
 
-    override fun putSuccessfully(t: Bookstore) {
+    override fun putSuccessfully(t: Product) {
         this.put(t)
             .then()
             .statusCode(HttpStatus.SC_NO_CONTENT)
     }
 
-    override fun delete(t: Bookstore): Response {
+    override fun delete(t: Product): Response {
         return RestAssured
             .given(spec.basicSpec())
-            .pathParams(mutableMapOf("bookstoreId" to t.id))
+            .pathParams(mutableMapOf("bookstoreId" to t.bookstoreId, "productId" to t.id))
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
-            .delete(config.bookstoreEndpoint().bookstoreById())
+            .delete(config.bookstoreEndpoint().bookstoreProductByStoreIdProductId())
     }
 
-    override fun deleteSuccessfully(t: Bookstore) {
+    override fun deleteSuccessfully(t: Product) {
         this.delete(t)
             .then()
             .statusCode(HttpStatus.SC_NO_CONTENT)

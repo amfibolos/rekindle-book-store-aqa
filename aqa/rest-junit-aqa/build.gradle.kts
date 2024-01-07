@@ -5,5 +5,4 @@ dependencies{
     testImplementation(project(":domain:core"))
     testImplementation(project(":domain:application"))
     testImplementation(project(":rest:rest-assured-adapter"))
-    testImplementation(libs.com.google.guice)
 }

@@ -13,8 +13,7 @@ import org.apache.http.HttpStatus
 open class CustomerControllerImpl @Inject constructor(
     private val config: Configuration,
     private val spec: Specification
-) :
-    CustomerController {
+) : CustomerController {
 
     override fun get(param: String): Response {
         return RestAssured.given(spec.basicSpec())
@@ -34,7 +33,7 @@ open class CustomerControllerImpl @Inject constructor(
             .`as`(Customer::class.java)
     }
 
-    override fun getAll(): Response {
+    override fun getAll(param: String): Response {
         return RestAssured.given(spec.basicSpec())
             .auth()
             .preemptive()
@@ -42,7 +41,7 @@ open class CustomerControllerImpl @Inject constructor(
             .get(config.customerEndpoint().customers())
     }
 
-    override fun getAllSuccessfully(): List<Customer> {
+    override fun getAllSuccessfully(param: String): List<Customer> {
         return this.getAll()
             .then()
             .statusCode(HttpStatus.SC_OK)
@@ -54,7 +53,7 @@ open class CustomerControllerImpl @Inject constructor(
 
     override fun post(t: Customer): Response {
         return RestAssured.given(spec.basicSpec())
-            .body(t.toJsonStringFiltered(JacksonFilters.idFilter))
+            .body(t.toJsonStringFiltered(JacksonFilters.customerFilter))
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
@@ -79,7 +78,7 @@ open class CustomerControllerImpl @Inject constructor(
             .auth()
             .preemptive()
             .oauth2(spec.getAuthToken())
-            .body(t.toJsonStringFiltered(JacksonFilters.idFilter))
+            .body(t.toJsonStringFiltered(JacksonFilters.customerFilter))
             .put(config.customerEndpoint().customerById())
     }
 

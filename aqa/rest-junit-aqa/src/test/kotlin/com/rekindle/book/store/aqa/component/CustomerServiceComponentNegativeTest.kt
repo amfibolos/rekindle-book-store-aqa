@@ -2,7 +2,9 @@ package com.rekindle.book.store.aqa.component
 
 import com.google.inject.Inject
 import com.rekindle.book.store.aqa.di.AdminExtension
+import com.rekindle.book.store.domain.assertions.isEqualToEither
 import com.rekindle.book.store.domain.errors.CustomerErrors
+import com.rekindle.book.store.domain.errors.GenericErrors
 import com.rekindle.book.store.domain.factory.FactoryKey
 import com.rekindle.book.store.domain.factory.FactoryKit
 import com.rekindle.book.store.domain.factory.customer.CustomerKey
@@ -13,7 +15,6 @@ import org.apache.http.HttpStatus
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import strikt.api.expect
-import strikt.assertions.contains
 import strikt.assertions.isEqualTo
 import java.util.*
 
@@ -31,11 +32,16 @@ internal class CustomerServiceComponentNegativeTest @Inject constructor(
         expect {
             that(response.statusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST)
         }
-        var errorMessage = response.body().jsonPath().get<String?>("errorMessage").split("--")
         expect {
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_USERNAME_NOT_BLANK)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_FIRSTNAME_NOT_BLANK)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_LASTNAME_NOT_BLANK)
+            that(
+                response.body().jsonPath().get<String?>("firstName")
+            ).isEqualToEither(GenericErrors.NOT_NULL, GenericErrors.NOT_BLANK)
+            that(
+                response.body().jsonPath().get<String?>("lastName")
+            ).isEqualToEither(GenericErrors.NOT_NULL, GenericErrors.NOT_BLANK)
+            that(
+                response.body().jsonPath().get<String?>("username")
+            ).isEqualToEither(GenericErrors.NOT_NULL, GenericErrors.NOT_BLANK)
         }
     }
 
@@ -46,14 +52,16 @@ internal class CustomerServiceComponentNegativeTest @Inject constructor(
         expect {
             that(response.statusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST)
         }
-        var errorMessage = response.body().jsonPath().get<String?>("errorMessage").split("--")
         expect {
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_USERNAME_NOT_NULL)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_USERNAME_NOT_BLANK)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_FIRSTNAME_NOT_NULL)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_FIRSTNAME_NOT_BLANK)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_LASTNAME_NOT_BLANK)
-            that(errorMessage).contains(CustomerErrors.CUSTOMER_LASTNAME_NOT_NULL)
+            that(
+                response.body().jsonPath().get<String?>("firstName")
+            ).isEqualToEither(GenericErrors.NOT_NULL, GenericErrors.NOT_BLANK)
+            that(
+                response.body().jsonPath().get<String?>("lastName")
+            ).isEqualToEither(GenericErrors.NOT_NULL, GenericErrors.NOT_BLANK)
+            that(
+                response.body().jsonPath().get<String?>("username")
+            ).isEqualToEither(GenericErrors.NOT_NULL, GenericErrors.NOT_BLANK)
         }
     }
 

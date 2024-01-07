@@ -7,8 +7,8 @@ interface CrudController<T : ValueObject, U> : Get<T, U>, GetAll<T, U>, Post<T, 
 
     override fun get(param: String): U
     override fun getSuccessfully(param: String): T
-    override fun getAll(): U
-    override fun getAllSuccessfully(): List<T>
+    override fun getAll(param: String): U
+    override fun getAllSuccessfully(param: String): List<T>
     override fun post(t: T): U
     override fun postSuccessfully(t: T): T
     override fun put(t: T): U

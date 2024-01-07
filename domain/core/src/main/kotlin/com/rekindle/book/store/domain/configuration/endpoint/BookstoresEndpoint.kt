@@ -19,4 +19,10 @@ interface BookstoresEndpoint : Config {
     @Key("bookstores.product.by.id")
     fun bookstoreProductById(): String
 
+    @Key("bookstores.products")
+    fun bookstoreProducts(): String
+
+    @Key("bookstore.product.by.store.id.product.id")
+    fun bookstoreProductByStoreIdProductId(): String
+
 }

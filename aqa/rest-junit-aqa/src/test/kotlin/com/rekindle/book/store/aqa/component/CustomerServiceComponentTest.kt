@@ -2,6 +2,7 @@ package com.rekindle.book.store.aqa.component
 
 import com.google.inject.Inject
 import com.rekindle.book.store.aqa.di.AdminExtension
+import com.rekindle.book.store.domain.errors.CustomerErrors
 import com.rekindle.book.store.domain.factory.FactoryKey.CUSTOMER
 import com.rekindle.book.store.domain.factory.FactoryKit
 import com.rekindle.book.store.domain.factory.customer.CustomerKey.STD_USER
@@ -23,11 +24,11 @@ internal class CustomerServiceComponentTest @Inject constructor(
     private var factoryKit: FactoryKit,
     private var customerController: CustomerController
 ) {
-    val customersList: List<Customer> = mutableListOf()
+    private val customersList: List<Customer> = mutableListOf()
 
     @AfterEach
-    fun clean(){
-        if (customersList.isNotEmpty()){
+    fun clean() {
+        if (customersList.isNotEmpty()) {
             customersList.forEach {
                 customerController.deleteSuccessfully(it)
             }
@@ -85,7 +86,12 @@ internal class CustomerServiceComponentTest @Inject constructor(
         customer = customerController.postSuccessfully(customer)
         customerController.deleteSuccessfully(customer)
         var response = customerController.get(customer.id!!)
-        expectThat(response.statusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST)
+        expect {
+            that(response.statusCode()).isEqualTo(HttpStatus.SC_BAD_REQUEST)
+            that(
+                response.body().jsonPath().get("errorMessage") as String
+            ).isEqualTo(CustomerErrors.CUSTOMER_NOT_FOUND)
+        }
     }
 
 }

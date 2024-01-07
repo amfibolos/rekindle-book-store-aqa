@@ -1,19 +1,8 @@
 package com.rekindle.book.store.aqa.di
 
 import com.google.inject.Guice
-import com.google.inject.Injector
-import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.api.extension.ParameterContext
-import org.junit.jupiter.api.extension.ParameterResolver
+import com.rekindle.book.store.domain.application.di.GuiceJunit5Extension
 
-class AdminExtension : ParameterResolver {
-    private val injector: Injector = Guice.createInjector(AdminModule())
+class AdminExtension : GuiceJunit5Extension(Guice.createInjector(AdminModule())) {
 
-    override fun supportsParameter(p0: ParameterContext?, p1: ExtensionContext?): Boolean {
-        return injector.getBinding(p0!!.parameter.type) != null
-    }
-
-    override fun resolveParameter(p0: ParameterContext?, p1: ExtensionContext?): Any {
-        return injector.getInstance(p0!!.parameter.getType());
-    }
 }

@@ -8,6 +8,8 @@ import com.rekindle.book.store.domain.factory.FactoryKit
 import com.rekindle.book.store.domain.factory.ValueObjectFactoryKit
 import com.rekindle.book.store.serenity.rest.controllers.bookstore.BookstoreController
 import com.rekindle.book.store.serenity.rest.controllers.bookstore.BookstoreControllerImpl
+import com.rekindle.book.store.serenity.rest.controllers.bookstore.BookstoreProductController
+import com.rekindle.book.store.serenity.rest.controllers.bookstore.BookstoreProductControllerImpl
 import com.rekindle.book.store.serenity.rest.controllers.customer.CustomerController
 import com.rekindle.book.store.serenity.rest.controllers.customer.CustomerControllerImpl
 import com.rekindle.book.store.serenity.rest.specification.AdminSpecification
@@ -21,6 +23,8 @@ class AdminModule : AbstractModule() {
         bind(Configuration::class.java).to(LocalConfiguration::class.java).`in`(Scopes.SINGLETON)
         bind(Specification::class.java).to(AdminSpecification::class.java).`in`(Scopes.SINGLETON)
         bind(BookstoreController::class.java).to(BookstoreControllerImpl::class.java)
+            .`in`(Scopes.SINGLETON)
+        bind(BookstoreProductController::class.java).to(BookstoreProductControllerImpl::class.java)
             .`in`(Scopes.SINGLETON)
     }
 

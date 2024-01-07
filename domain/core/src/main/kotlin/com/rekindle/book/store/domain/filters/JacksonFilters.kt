@@ -6,9 +6,21 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider
 
 class JacksonFilters {
     companion object {
-        val idFilter: FilterProvider = SimpleFilterProvider().addFilter(
-            Filter.ID_FILTER,
+        val creditFilter: FilterProvider = SimpleFilterProvider().addFilter(
+            Filter.CREDIT_FILTER,
+            SimpleBeanPropertyFilter.serializeAllExcept("id", "transactionType")
+        )
+        val customerFilter: FilterProvider = SimpleFilterProvider().addFilter(
+            Filter.CUSTOMER_FILTER,
             SimpleBeanPropertyFilter.serializeAllExcept("id")
+        )
+        val bookstoreFilter: FilterProvider = SimpleFilterProvider().addFilter(
+            Filter.BOOKSTORE_FILTER,
+            SimpleBeanPropertyFilter.serializeAllExcept("id")
+        )
+        val bookstoreProductFilter: FilterProvider = SimpleFilterProvider().addFilter(
+            Filter.BOOKSTORE_PRODUCT_FILTER,
+            SimpleBeanPropertyFilter.serializeAllExcept("id", "bookstoreId", "bookstores")
         )
     }
 }
